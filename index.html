@@ -92,13 +92,18 @@ footer.wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;p
 </div>
 <script>
 (function(){
-  var COLS=40, ROWS=26, CELL=40, REACH=3, STEP=0.4, GAP=400;
-  var SCALES=[2.8,2.3,1.8,1.35], ALPHAS=[0.7,0.55,0.4,0.28], GLOWS=[3,2,0,0], BASE=0.16;
+  var COLS=40, ROWS=26, CELL=40, REACH=3, GAP=400;
   var grid=document.getElementById('grid'), dots=[];
   var frag=document.createDocumentFragment();
   for(var i=0;i<COLS*ROWS;i++){var c=document.createElement('div');c.className='cell';var d=document.createElement('div');d.className='dot';c.appendChild(d);frag.appendChild(c);dots.push(d);}
   grid.appendChild(frag);
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var wide=window.matchMedia('(min-width: 1024px)');
+  function look(){
+    return wide.matches
+      ? {scale:[3.8,3.1,2.4,1.7], alpha:[0.9,0.75,0.56,0.4], glow:[8,5,3,0]}
+      : {scale:[2.8,2.3,1.8,1.35], alpha:[0.7,0.55,0.4,0.28], glow:[3,2,0,0]};
+  }
   var last={cx:-99,cy:-99};
   function pick(){
     var r=grid.getBoundingClientRect();
@@ -112,28 +117,45 @@ footer.wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;p
     }
     return last;
   }
-  function each(p,fn){
-    for(var y=Math.max(0,p.cy-REACH);y<=Math.min(ROWS-1,p.cy+REACH);y++)
-      for(var x=Math.max(0,p.cx-REACH);x<=Math.min(COLS-1,p.cx+REACH);x++)
-        fn(dots[y*COLS+x],Math.max(Math.abs(x-p.cx),Math.abs(y-p.cy)));
+  function ring(p,d){
+    var out=[];
+    for(var y=Math.max(0,p.cy-d);y<=Math.min(ROWS-1,p.cy+d);y++)
+      for(var x=Math.max(0,p.cx-d);x<=Math.min(COLS-1,p.cx+d);x++)
+        if(Math.max(Math.abs(x-p.cx),Math.abs(y-p.cy))===d) out.push(dots[y*COLS+x]);
+    return out;
   }
-  function pulse(){
-    var p=pick();
-    each(p,function(el,d){
-      el.style.transitionDelay=(d*STEP)+'s';
-      el.style.transform='scale('+SCALES[d]+')';
-      el.style.backgroundColor='rgba(140,128,225,'+ALPHAS[d]+')';
-      el.style.boxShadow=GLOWS[d]?'0 0 '+GLOWS[d]+'px rgba(140,128,225,0.45)':'none';
+  function set(els,scale,alpha,glow,dur,ease){
+    var tr=['transform','background-color','box-shadow'].map(function(k){return k+' '+dur+'s '+(ease||'ease-in-out');}).join(',');
+    els.forEach(function(el){
+      el.style.transition=tr;
+      if(scale===null){el.style.transform='';el.style.backgroundColor='';el.style.boxShadow='none';}
+      else{
+        el.style.transform='scale('+scale+')';
+        el.style.backgroundColor='rgba(140,128,225,'+alpha+')';
+        el.style.boxShadow=glow?'0 0 '+glow+'px rgba(140,128,225,0.5)':'none';
+      }
     });
-    setTimeout(function(){
-      each(p,function(el,d){
-        el.style.transitionDelay=((REACH-d)*STEP)+'s';
-        el.style.transform='';el.style.backgroundColor='';el.style.boxShadow='none';
-      });
-    },2800);
-    setTimeout(pulse,5400+GAP);
   }
-  setTimeout(pulse,400);
+  function at(ms,fn){setTimeout(fn,ms);}
+  function pulse(){
+    var p=pick(), L=look(), rings=[];
+    for(var d=0;d<=REACH;d++) rings.push(ring(p,d));
+    // grow outward
+    rings.forEach(function(els,d){
+      at(d*400,function(){set(els,L.scale[d],L.alpha[d],L.glow[d],1.1);});
+    });
+    // rebound inward: each ring flashes as the wave passes, then settles; the centre pops last
+    var T=2900, STEP=420;
+    for(var k=REACH;k>=0;k--)(function(d){
+      var t=T+(REACH-d)*STEP, centre=d===0;
+      at(t,function(){
+        set(rings[d], L.scale[d]*(centre?1.3:1.12), Math.min(1,L.alpha[d]+(centre?0.25:0.15)), L.glow[d]+(centre?6:2), centre?0.35:0.25, 'ease-out');
+      });
+      at(t+(centre?400:300),function(){set(rings[d],null,0,0,centre?1.1:0.8);});
+    })(k);
+    at(T+REACH*STEP+400+1100+GAP,pulse);
+  }
+  at(400,pulse);
 })();
 </script>
 </body>
