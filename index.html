@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rheya Labs — Power resilience and intelligence for pumping stations</title>
+<meta name="description" content="Eliminate pollution and unlock prediction from telemetry. Stop ODI penalties at the source.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%231c1950'/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Ccircle cx='20' cy='12' r='3'/%3E%3Ccircle cx='28' cy='12' r='3'/%3E%3Ccircle cx='12' cy='20' r='3'/%3E%3Ccircle cx='28' cy='20' r='3'/%3E%3Ccircle cx='12' cy='28' r='3'/%3E%3Ccircle cx='20' cy='28' r='3'/%3E%3Ccircle cx='28' cy='28' r='3'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#1c1950}
+a{color:#e9e6ff;text-decoration:none}a:hover{color:#fff}
+.page{position:relative;min-height:100vh;min-height:100dvh;overflow:hidden;background:#1c1950;color:#f3f1ff;font-family:'Alegreya Sans','Gill Sans','Trebuchet MS',sans-serif;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bg{position:absolute;inset:0;pointer-events:none}
+.terrain{background-color:#1c1950;background-image:url(rheya-coastline.jpg);background-size:cover;background-position:center 40%}
+.shade{opacity:.85;background:linear-gradient(90deg,rgba(24,21,72,.92) 0%,rgba(24,21,72,.7) 40%,rgba(24,21,72,.45) 75%,rgba(24,21,72,.4) 100%)}
+.glow{position:absolute;border-radius:50%;pointer-events:none}
+.grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(40,40px);grid-auto-rows:40px;justify-content:center;align-content:center;pointer-events:none}
+.cell{display:flex;align-items:center;justify-content:center}
+.dot{width:5px;height:5px;border-radius:50%;background-color:rgba(255,255,255,.16);transition:transform 1.3s ease-in-out,background-color 1.3s ease-in-out,box-shadow 1.3s ease-in-out}
+@media (prefers-reduced-motion:reduce){.dot{transition:none!important;transform:none!important}}
+.wrap{position:relative;z-index:1;max-width:90rem;width:100%;margin:0 auto;padding-left:clamp(1.25rem,4vw,3.5rem);padding-right:clamp(1.25rem,4vw,3.5rem)}
+header.wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.5rem 2rem;padding-top:1.5rem;padding-bottom:1.5rem}
+.brand{display:flex;align-items:center;gap:.75rem;color:#fff}
+.brand span{font-size:1.35rem;line-height:1.05}
+nav{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem clamp(1.5rem,5vw,4.5rem);font-size:1.05rem}
+nav a{position:relative}
+nav a:not(.pill)::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
+nav a:not(.pill):hover::after{transform:scaleX(1)}
+.pill{display:inline-flex;align-items:center;min-height:44px;padding:0 1.4rem;border:1px solid rgba(255,255,255,.55);border-radius:999px;color:#fff}
+main.wrap{flex-grow:1;display:flex;align-items:center;padding-top:3rem;padding-bottom:5rem}
+.hero{display:flex;flex-direction:column;gap:2.25rem;max-width:40rem}
+h1{margin:0;font-size:clamp(2.6rem,6vw,4.75rem);line-height:1.08;font-weight:400;letter-spacing:-.01em;color:#fff;text-shadow:0 0 28px rgba(28,25,80,.9)}
+.sub{display:flex;flex-direction:column;gap:.4rem;font-size:clamp(1.1rem,1.6vw,1.35rem);line-height:1.45;font-weight:300;color:#dcd8f7;text-shadow:0 0 18px rgba(28,25,80,.95)}
+.sub p{margin:0}
+.ctas{display:flex;flex-wrap:wrap;gap:1rem;padding-top:.5rem}
+.btn{display:inline-flex;align-items:center;min-height:48px;padding:0 1.75rem;border-radius:999px;background:#fff;color:#1c1950;font-weight:500;font-size:1.05rem}
+.btn:hover{color:#1c1950;background:#ece9ff}
+.link{display:inline-flex;align-items:center;min-height:48px;padding:0 1.25rem;color:#fff;font-size:1.05rem}
+footer.wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding-top:1.5rem;padding-bottom:1.5rem;font-size:.95rem;color:#b9b4e6}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bg terrain" aria-hidden="true"></div>
+  <div class="bg shade" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true" style="left:-12rem;bottom:-14rem;width:42rem;height:42rem;background:radial-gradient(circle,rgba(124,92,190,.55) 0%,rgba(124,92,190,0) 65%)"></div>
+  <div class="glow" aria-hidden="true" style="right:-10rem;top:-12rem;width:46rem;height:46rem;background:radial-gradient(circle,rgba(58,52,150,.6) 0%,rgba(58,52,150,0) 65%)"></div>
+  <div class="grid" id="grid" aria-hidden="true"></div>
+
+  <header class="wrap" id="header">
+    <a class="brand" href="#top" aria-label="Rheya Labs home">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+        <g fill="#ffffff">
+          <circle cx="4" cy="4" r="1.6"></circle><circle cx="12" cy="4" r="1.6"></circle><circle cx="20" cy="4" r="1.6"></circle><circle cx="28" cy="4" r="1.6"></circle><circle cx="36" cy="4" r="1.6"></circle>
+          <circle cx="4" cy="12" r="1.6"></circle><circle cx="12" cy="12" r="2.4"></circle><circle cx="20" cy="12" r="2.4"></circle><circle cx="28" cy="12" r="2.4"></circle><circle cx="36" cy="12" r="1.6"></circle>
+          <circle cx="4" cy="20" r="1.6"></circle><circle cx="12" cy="20" r="2.4"></circle><circle cx="20" cy="20" r="1"></circle><circle cx="28" cy="20" r="2.4"></circle><circle cx="36" cy="20" r="1.6"></circle>
+          <circle cx="4" cy="28" r="1.6"></circle><circle cx="12" cy="28" r="2.4"></circle><circle cx="20" cy="28" r="2.4"></circle><circle cx="28" cy="28" r="2.4"></circle><circle cx="36" cy="28" r="1.6"></circle>
+          <circle cx="4" cy="36" r="1.6"></circle><circle cx="12" cy="36" r="1.6"></circle><circle cx="20" cy="36" r="1.6"></circle><circle cx="28" cy="36" r="1.6"></circle><circle cx="36" cy="36" r="1.6"></circle>
+        </g>
+      </svg>
+      <span>Rheya<br>Labs</span>
+    </a>
+    <nav aria-label="Main">
+      <a href="#top" style="color:#fff">Home</a>
+      <a href="#about">About</a>
+      <a href="#news">News</a>
+      <a class="pill" href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main class="wrap" id="top">
+    <div class="hero">
+      <h1>Power resilience and intelligence for pumping stations.</h1>
+      <div class="sub">
+        <p>Eliminate pollution and unlock prediction from telemetry.</p>
+        <p>Stop ODI penalties at the source.</p>
+      </div>
+      <div class="ctas">
+        <a class="btn" href="#contact">Get in touch</a>
+        <a class="link" href="#about">Learn more →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="wrap">
+    <span>© Rheya Labs</span>
+    <span>[YOUR EMAIL]</span>
+  </footer>
+</div>
+<script>
+(function(){
+  var COLS=40, ROWS=26, CELL=40, REACH=3, STEP=0.4, GAP=400;
+  var SCALES=[2.8,2.3,1.8,1.35], ALPHAS=[0.7,0.55,0.4,0.28], GLOWS=[3,2,0,0], BASE=0.16;
+  var grid=document.getElementById('grid'), dots=[];
+  var frag=document.createDocumentFragment();
+  for(var i=0;i<COLS*ROWS;i++){var c=document.createElement('div');c.className='cell';var d=document.createElement('div');d.className='dot';c.appendChild(d);frag.appendChild(c);dots.push(d);}
+  grid.appendChild(frag);
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var last={cx:-99,cy:-99};
+  function pick(){
+    var r=grid.getBoundingClientRect();
+    var offX=(COLS*CELL-r.width)/2, offY=(ROWS*CELL-r.height)/2;
+    var c0=Math.max(1,Math.floor(offX/CELL)+2), c1=Math.min(COLS-2,Math.floor((r.width+offX)/CELL)-2);
+    var r0=Math.max(1,Math.floor(offY/CELL)+2), r1=Math.min(ROWS-2,Math.floor((Math.min(r.height,window.innerHeight)+offY)/CELL)-2);
+    if(c1<c0){c0=c1=Math.round((c0+c1)/2);} if(r1<r0){r0=r1=Math.round((r0+r1)/2);}
+    for(var t=0;t<40;t++){
+      var cx=c0+Math.floor(Math.random()*(c1-c0+1)), cy=r0+Math.floor(Math.random()*(r1-r0+1));
+      if(Math.abs(cx-last.cx)>=5||Math.abs(cy-last.cy)>=5||t>30){last={cx:cx,cy:cy};return last;}
+    }
+    return last;
+  }
+  function each(p,fn){
+    for(var y=Math.max(0,p.cy-REACH);y<=Math.min(ROWS-1,p.cy+REACH);y++)
+      for(var x=Math.max(0,p.cx-REACH);x<=Math.min(COLS-1,p.cx+REACH);x++)
+        fn(dots[y*COLS+x],Math.max(Math.abs(x-p.cx),Math.abs(y-p.cy)));
+  }
+  function pulse(){
+    var p=pick();
+    each(p,function(el,d){
+      el.style.transitionDelay=(d*STEP)+'s';
+      el.style.transform='scale('+SCALES[d]+')';
+      el.style.backgroundColor='rgba(140,128,225,'+ALPHAS[d]+')';
+      el.style.boxShadow=GLOWS[d]?'0 0 '+GLOWS[d]+'px rgba(140,128,225,0.45)':'none';
+    });
+    setTimeout(function(){
+      each(p,function(el,d){
+        el.style.transitionDelay=((REACH-d)*STEP)+'s';
+        el.style.transform='';el.style.backgroundColor='';el.style.boxShadow='none';
+      });
+    },2800);
+    setTimeout(pulse,5400+GAP);
+  }
+  setTimeout(pulse,400);
+})();
+</script>
+</body>
+</html>
